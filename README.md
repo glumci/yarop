@@ -1,22 +1,78 @@
-# yarop
+# YAROP
 
-A Clojure library designed to ... well, that part is up to you.
+Yet Another Railway Oriented Programming library for Clojure.
 
 ## Usage
 
-FIXME
+**YAROP** assumes that results of all operations are represented
+as pairs (2-vectors) in which the first element represents the 
+**value** of the operation and the second element is the **error**.
+Both value and error may be of arbitrary types.
+
+Results can be created in several ways. Although a result can be
+created directly, several utility factory functions are provided
+for improved readability. The following equalities are all `true`,
+for every value `v` and error `e`:
+
+```clojure
+(= [v e] (result v e))
+(= [v nil] (result v nil) (value->result v))
+(= [nil e] (result nil e) (error->result e))
+```
+
+Considering that a result is just a 2-vector, once it is created 
+the value and error can be constructed in the usual way, using 
+standard functions: `first`, `second`, `nth`, etc. Again, to improve
+readability, utility functions `value` and `error` are
+provided. The following equalities all evaluate to `true`:
+
+```clojure
+(= (first res) (nth res 0) (res 0) (value res))
+(= (second res) (nth res 1) (res 1) (error res))
+```
+
+Given a result, it is considered successful if its error is `nil`,
+and failure otherwise, irrespective of the value. Two utility
+functions are provided to check correctness of the result `success?`
+and `failure?`. The following evaluate to `true`:
+
+```clojure
+(success? (result 2 nil))
+(success? (result nil nil))
+(failure? (result nil 2))
+(failure? (result 2 2))
+```
+
+The most important operator defined in **YAROP** is the
+**railway thread first** (`=>`) operator which is used to chain 
+functions producing results (i.e. 2-vectors with first element 
+representing the value and the second element representing the 
+error). The operator is used in much the same way as the 
+conventional thread first operator (`->`).
+
+The following listing assumes that all functions from 
+`closure.math` namespace are imported
+
+```clojure
+(def my-reciprocal [x] 
+  (if (not= x 0) 
+    (value->result (/ 1 x))
+    (error->result "division by zero")))
+
+(def my-sqrt [x]
+  (if (>= x 0)
+    (value->result (sqrt x))
+    (error->result "sqrt of negative number")))
+
+(=> 4 my-sqrt my-reciprocal) ; [0.5 nil]
+(=> -4 my-sqrt my-reciprocal) ; [nil "sqrt of negative number"]
+(=> 0 my-sqrt my-reciprocal) ; [nil "division by zero"]
+```
 
 ## License
 
-Copyright © 2022 FIXME
+Copyright © 2022 Milan R. Rapaić
 
 This program and the accompanying materials are made available under the
-terms of the Eclipse Public License 2.0 which is available at
-http://www.eclipse.org/legal/epl-2.0.
-
-This Source Code may also be made available under the following Secondary
-Licenses when the conditions for such availability set forth in the Eclipse
-Public License, v. 2.0 are satisfied: GNU General Public License as published by
-the Free Software Foundation, either version 2 of the License, or (at your
-option) any later version, with the GNU Classpath Exception which is available
-at https://www.gnu.org/software/classpath/license.html.
+terms of the MIT license which is available at
+https://choosealicense.com/licenses/mit.
