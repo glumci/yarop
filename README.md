@@ -54,12 +54,12 @@ The following listing assumes that all functions from
 `closure.math` namespace are imported
 
 ```clojure
-(def my-reciprocal [x] 
+(defn my-reciprocal [x] 
   (if (not= x 0) 
     (value->result (/ 1 x))
     (error->result "division by zero")))
 
-(def my-sqrt [x]
+(defn my-sqrt [x]
   (if (>= x 0)
     (value->result (sqrt x))
     (error->result "sqrt of negative number")))
@@ -68,6 +68,20 @@ The following listing assumes that all functions from
 (=> -4 my-sqrt my-reciprocal) ; [nil "sqrt of negative number"]
 (=> 0 my-sqrt my-reciprocal) ; [nil "division by zero"]
 ```
+
+The `=>` operator swallows exceptions. If any of the threaded
+functions raises an exception during execution, the exception
+will be caught and return as an erroneous result (a failure).
+
+```clojure
+(defn throwing-fcn [x] (throw (Exception. "random error")))
+
+(=> "random value" throwing-fcn) ; [nil (Exception "random error")]
+```
+
+**Warning:** At present the railway thread first operator operates
+correctly only on functions which accept a single argument. This
+behavior will be amended in the future releases.
 
 ## License
 

@@ -58,4 +58,7 @@
   Creates a success result from `value` and applies to each
   function conditionally, as long as the result is successful."
   [value & functions]
-  (cons '->> (cons [value nil] (for [f functions] (list 'apply-if-success f)))))
+  (list 'try
+        (cons '->> (cons [value nil] (for [f functions] (list 'apply-if-success f))))
+        (list 'catch Exception 'e [nil 'e]))
+  #_(cons '->> (cons [value nil] (for [f functions] (list 'apply-if-success f)))))

@@ -2,6 +2,14 @@
   (:require [clojure.test :refer :all]
             [yarop.core :refer :all]))
 
+(deftest success?-failure?-test
+  (testing "success?"
+    (is (success? [2 nil]) "result with `nil` error should be considered success")
+    (is (success? [nil nil]) "result with `nil` error should be considered success (even if value is also `nil`)"))
+  (testing "failure?"
+    (is (failure? [2 2]) "result with non-`nil` error should be considered failure")
+    (is (failure? [nil ""]) "result with non-`nil` error should be considered failure (even if value is not `nil`)")))
+
 (deftest result-from-value-test
   (testing "result-from-value returns a proper result"
     (let [res (value->result "value")]
