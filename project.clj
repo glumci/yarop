@@ -1,4 +1,4 @@
-(defproject org.clojars.rapaja/yarop "0.1.0-SNAPSHOT"
+(defproject org.clojars.rapaja/yarop "0.1.0"
   :description "Yet Another Railway Oriented Programming library"
   :url "https://github.com/rapaja/yarop"
   :license {:name "MIT"

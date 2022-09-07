@@ -1,4 +1,5 @@
-(ns yarop.core)
+(ns yarop.core
+  "Core namespace of the YAROP library.")
 
 (defn value->result
   "Returns a successful result with the given value `v`."
@@ -60,5 +61,4 @@
   [value & functions]
   (list 'try
         (cons '->> (cons [value nil] (for [f functions] (list 'apply-if-success f))))
-        (list 'catch Exception 'e [nil 'e]))
-  #_(cons '->> (cons [value nil] (for [f functions] (list 'apply-if-success f)))))
+        (list 'catch Exception 'e [nil 'e])))

@@ -40,9 +40,14 @@
         f-success (fn [x] (value->result (inc x)))
         f-failure (fn [x] (error->result error-code))]
     (testing "both successful"
-      (is (= (=> 0 f-success f-success) (value->result 2))))
+      (is (= (=> 0 f-success f-success) (value->result 2)) "the final value should be 0+1+1=2"))
     (testing "second fails"
-      (is (= (=> 0 f-success f-failure) (result nil error-code))))
+      (is (= (=> 0 f-success f-failure) (result nil error-code)) "the final result should be failure"))
     (testing "first fails"
-      (is (= (=> 0 f-failure f-failure) (result nil error-code))))))
+      (is (= (=> 0 f-failure f-failure) (result nil error-code))), "the final result should be failure"))
+  (let [throwing-fcn (fn [x] (throw (Exception. "random error")))
+        res (=> 2 throwing-fcn)]
+    (testing "exceptions are wrapped inside result"
+      (is (failure? res) "the result should be failure")
+      (is (->> res error (instance? Exception)) "the error should be the exception"))))
 
